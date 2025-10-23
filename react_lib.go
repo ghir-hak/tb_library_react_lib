@@ -1,9 +1,6 @@
 package lib
 
 import (
-	"crypto/md5"
-	"encoding/hex"
-
 	"github.com/taubyte/go-sdk/event"
 	http "github.com/taubyte/go-sdk/http/event"
 	pubsub "github.com/taubyte/go-sdk/pubsub/node"
@@ -22,19 +19,8 @@ func getsocketurl(e event.Event) uint32 {
 		return 1
 	}
 
-	// get room from query
-	room, err := h.Query().Get("room")
-	if err != nil {
-		return fail(h, err, 500)
-	}
-
-	// hash the room to create a channel name
-	hash := md5.New()
-	hash.Write([]byte(room))
-	roomHash := hex.EncodeToString(hash.Sum(nil))
-
-	// create/open a channel with the hash
-	channel, err := pubsub.Channel("chat-" + roomHash)
+	// create/open a static channel named "chat"
+	channel, err := pubsub.Channel("general")
 	if err != nil {
 		return fail(h, err, 500)
 	}
